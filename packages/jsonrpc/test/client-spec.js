@@ -54,7 +54,7 @@ describe('Client::', function () {
 		it('should that default value of server.name is `<anonymous>`.', function () {
 			const client = Client();
 
-			assert.deepStrictEqual(client.name, '<anonymous>');
+			assert.deepStrictEqual(client.name, '<client-anonymous>');
 			client.destroy();
 		});
 

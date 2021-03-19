@@ -33,7 +33,7 @@ module.exports = function ProduckJsonRpcDuplexPeer(options) {
 			return client.request(method, params);
 		},
 		notification(method, params) {
-			client.notificate(method, params)
+			client.notificate(method, params);
 		},
 		batch() {
 			return client.batch();

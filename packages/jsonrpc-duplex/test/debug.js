@@ -4,4 +4,4 @@ const JsonRpcDuplexPeer = require('../');
 
 const peer = JsonRpcDuplexPeer();
 
-peer.re
+peer.re;

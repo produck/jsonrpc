@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "dependencies": {},
   "devDependencies": {
     "lerna": "^4.0.0"
   },
   "scripts": {
     "test": "lerna run test",
     "lint": "eslint --fix packages/**/*.js",
+    "prepublish": "npm run lint && npm run test",
     "dev:install": "lerna bootstrap"
   },
   "repository": {

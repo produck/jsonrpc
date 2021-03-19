@@ -62,7 +62,7 @@ describe('Server::', function () {
 		it('should that default value of server.name is `<anonymous>`.', function () {
 			const server = Server();
 
-			assert.strictEqual(server.name, '<anonymous>');
+			assert.strictEqual(server.name, '<server-anonymous>');
 		});
 	});
 
