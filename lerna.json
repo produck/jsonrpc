@@ -1,0 +1,21 @@
+{
+  "packages": [
+    "packages/*"
+  ],
+  "npmClient": "npm",
+  "command": {
+    "bootstrap": {
+      "npmClientArgs": [
+        "--no-package-lock",
+        "--registry=https://registry.npm.taobao.org"
+      ]
+    },
+    "publish": {
+      "registry": "https://registry.npmjs.org/",
+      "ignoreChanges": [
+        "*.md"
+      ]
+    }
+  },
+  "version": "independent"
+}

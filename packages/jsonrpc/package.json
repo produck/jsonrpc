@@ -1,0 +1,27 @@
+{
+  "name": "@produck/jsonrpc",
+  "version": "0.1.0",
+  "description": "Communication independent jsonrpc 2.0",
+  "main": "index.js",
+  "scripts": {
+    "debug": "node ./script/debug.js",
+    "test": "mocha -t 99999"
+  },
+  "types": "index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/produck/jsonrpc.git"
+  },
+	"keywords": [
+		"jsonrpc"
+	],
+  "author": "ChaosLee",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/produck/jsonrpc/issues"
+  },
+  "homepage": "https://github.com/produck/jsonrpc#readme",
+  "devDependencies": {
+    "mocha": "^8.3.2"
+  }
+}

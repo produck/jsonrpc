@@ -1,0 +1,25 @@
+{
+  "name": "@produck/jsonrpc-packages",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "lerna": "^4.0.0"
+  },
+  "scripts": {
+    "test": "lerna run test",
+    "lint": "eslint --fix packages/**/*.js",
+    "dev:install": "lerna bootstrap"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/produck/jsonrpc.git"
+  },
+  "author": "ChaosLee",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/produck/jsonrpc/issues"
+  },
+  "homepage": "https://github.com/produck/jsonrpc#readme"
+}
