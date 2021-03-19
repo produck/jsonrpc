@@ -1,10 +1,9 @@
 {
   "name": "@produck/jsonrpc-duplex",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Using jsonrpc client & server to implement duplex-jsonrpc peer.",
   "main": "index.js",
-  "scripts": {
-  },
+  "scripts": {},
   "keywords": [
     "jsonrpc",
     "duplex"
@@ -27,7 +26,7 @@
     "mocha": "^8.3.2"
   },
   "dependencies": {
-    "@produck/jsonrpc": "^0.2.0"
+    "@produck/jsonrpc": "^0.2.1"
   },
   "gitHead": "ecea6d2b7f83897a8206e77e80e4f4e28db821af"
 }

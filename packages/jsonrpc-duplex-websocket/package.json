@@ -1,6 +1,6 @@
 {
   "name": "@produck/jsonrpc-duplex-websocket",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A peer-to-peer using jsonrpc duplex implementation by websocket protocol.",
   "keywords": [
     "ws",
@@ -21,9 +21,7 @@
     "type": "git",
     "url": "git+https://github.com/produck/jsonrpc.git"
   },
-  "scripts": {
-
-  },
+  "scripts": {},
   "bugs": {
     "url": "https://github.com/produck/jsonrpc/issues"
   }
