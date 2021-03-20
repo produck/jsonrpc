@@ -3,7 +3,9 @@
   "version": "0.1.1",
   "description": "Using jsonrpc client & server to implement duplex-jsonrpc peer.",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "mocha -t 5000"
+	},
   "keywords": [
     "jsonrpc",
     "duplex"

@@ -6,46 +6,59 @@ const normalize = require('./src/normalize');
 module.exports = function ProduckJsonRpcDuplexPeer(options) {
 	const finalOptions = normalize(options);
 
-	const client = JsonRpc.Client({
-		Id: finalOptions.Id,
-		name: finalOptions.name,
-		serialize: finalOptions.serialize,
-		deserialize: finalOptions.deserialize,
-		sendRequest: finalOptions.sendRequest,
-		timeout: finalOptions.timeout,
-		warn: finalOptions.warn
-	});
+	const context = {
+		alive: true,
+		client: JsonRpc.Client({
+			Id: finalOptions.Id,
+			name: finalOptions.name,
+			serialize: finalOptions.serialize,
+			deserialize: finalOptions.deserialize,
+			sendRequest: finalOptions.sendRequest,
+			timeout: finalOptions.timeout,
+			warn: finalOptions.warn
+		}),
+		server: JsonRpc.Server({
+			name: finalOptions.name,
+			methodMap: finalOptions.methodMap,
+			serialize: finalOptions.serialize,
+			deserialize: finalOptions.deserialize,
+			sendResponse: finalOptions.sendResponse,
+			warn: finalOptions.warn
+		})
+	};
 
-	const server = JsonRpc.Server({
-		name: finalOptions.name,
-		methodMap: finalOptions.methodMap,
-		serialize: finalOptions.serialize,
-		deserialize: finalOptions.deserialize,
-		sendResponse: finalOptions.sendResponse,
-		warn: finalOptions.warn
-	});
+	function WrapAssertDestroy(callback) {
+		return function method(...args) {
+			if (context.alive === false) {
+				throw new Error('The jsonrpc duplex peer has been destroyed.');
+			}
+
+			return callback(...args);
+		};
+	}
 
 	return {
 		get name() {
 			return finalOptions.name;
 		},
-		request(method, params) {
-			return client.request(method, params);
-		},
-		notification(method, params) {
-			client.notificate(method, params);
-		},
-		batch() {
-			return client.batch();
-		},
-		handleResponse(raw) {
-			client.handleResponse(raw);
-		},
-		handleRequest(raw) {
-			server.handleRequest(raw);
-		},
-		destroy() {
-			client.destroy();
-		}
+		request: WrapAssertDestroy((method, params) => {
+			return context.client.request(method, params);
+		}),
+		notification: WrapAssertDestroy((method, params) => {
+			context.client.notificate(method, params);
+		}),
+		batch: WrapAssertDestroy(() => {
+			return context.client.batch();
+		}),
+		handleResponse: WrapAssertDestroy((raw) => {
+			context.client.handleResponse(raw);
+		}),
+		handleRequest: WrapAssertDestroy((raw) => {
+			context.server.handleRequest(raw);
+		}),
+		destroy: WrapAssertDestroy(() => {
+			context.client.destroy();
+			context.alive = false;
+		})
 	};
 };

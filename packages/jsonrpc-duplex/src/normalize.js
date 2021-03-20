@@ -10,7 +10,7 @@ function DefaultIdGenerator() {
 	};
 }
 
-module.exports = function normalize(_options) {
+module.exports = function normalize(_options = {}) {
 	const options = {
 		Id: DefaultIdGenerator(),
 		name: '<duplex-anonymous>',
@@ -76,6 +76,16 @@ module.exports = function normalize(_options) {
 	if ((typeof _timeout !== 'number') || _timeout < 10) {
 		throw new TypeError('The `options.timout` MUST be a integer and >10.');
 	}
+
+	options.Id = _Id;
+	options.name = _name;
+	options.methodMap = _methodMap;
+	options.serialize = _serialize;
+	options.deserialize = _deserialize;
+	options.sendRequest = _sendRequest;
+	options.sendResponse = _sendResponse;
+	options.timeout = _timeout;
+	options.warn = _warn;
 
 	return options;
 };
