@@ -1,6 +1,6 @@
 'use strict';
 
-const Peer = require('../');
+const { DuplexPeer: Peer } = require('../');
 const assert = require('assert');
 
 describe('DuplexPeer::', function () {

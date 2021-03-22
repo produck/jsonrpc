@@ -24,5 +24,8 @@
   "scripts": {},
   "bugs": {
     "url": "https://github.com/produck/jsonrpc/issues"
+  },
+  "dependencies": {
+    "@produck/jsonrpc-duplex": "^0.1.1"
   }
 }

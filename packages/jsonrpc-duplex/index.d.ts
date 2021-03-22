@@ -111,4 +111,8 @@ declare namespace JsonRpcDuplex {
 
 declare function JsonRpcDuplexPeer(options: JsonRpcDuplex.Options): JsonRpcDuplex.Peer;
 
-export = JsonRpcDuplexPeer;
+export = {
+	DuplexPeer: JsonRpcDuplexPeer,
+	Client: JsonRpcClient,
+	Server: JsonRpcServer
+};

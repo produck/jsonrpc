@@ -3,7 +3,7 @@
 const JsonRpc = require('@produck/jsonrpc');
 const normalize = require('./src/normalize');
 
-module.exports = function ProduckJsonRpcDuplexPeer(options) {
+function ProduckJsonRpcDuplexPeer(options) {
 	const finalOptions = normalize(options);
 
 	const context = {
@@ -61,4 +61,10 @@ module.exports = function ProduckJsonRpcDuplexPeer(options) {
 			context.alive = false;
 		})
 	};
+}
+
+module.exports = {
+	DuplexPeer: ProduckJsonRpcDuplexPeer,
+	Client: JsonRpc.Client,
+	Server: JsonRpc.Server
 };

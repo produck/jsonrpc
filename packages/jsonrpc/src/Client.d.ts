@@ -36,6 +36,7 @@ declare namespace Client {
 	export interface Options {
 		/**
 		 * Client peer name.
+		 * @default '<client-anonymous>'
 		 */
 		name?: string,
 
