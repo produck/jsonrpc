@@ -44,9 +44,10 @@ declare namespace Server {
 	export interface Peer {
 		/**
 		 * Calling with raw when a request incoming.
-		 * @param raw A transport data;
+		 * @param raw raw data of request payload
+		 * @returns raw data of response payload
 		 */
-		handleRequest(raw: any): void;
+		handleRequest(raw: any): any;
 
 		/**
 		 * Access the name of a server peer.

@@ -11,12 +11,14 @@ function DefaultIdGenerator() {
 }
 
 module.exports = function normalize(_options = {}) {
+	function noop() {}
+
 	const options = {
 		Id: DefaultIdGenerator(),
 		name: '<client-anonymous>',
 		serialize: JSON.stringify,
 		deserialize: JSON.parse,
-		sendRequest: raw => raw,
+		sendRequest: noop,
 		timeout: DEFAULT_INTERNAL_TIMEOUT,
 		warn: function warn() {
 			console.warn('@product/jsonrpc: invalid response detected.');

@@ -4,7 +4,7 @@
 This module is used to help developing rpc application in [JSONRPC 2.0](https://www.jsonrpc.org/) protocol.
 
 ## Feature
-* Only for JSONRPC 2.0
+* Only for JSONRPC `2.0`
 * Client factory with default options
 * Good interface to batch request
 * Server factory with default options
@@ -54,11 +54,99 @@ client.notification('anyMethod', { foo: 'bar' });
     }
 }());
 ```
+A most simple server,
+```js
+const JsonRpc = require('@produck/jsonrpc');
+
+const server = JsonRpc.Server({
+    // Providing a function to handle a response payload raw defining how to send.
+    // Such as http response...
+    sendRequest: raw => console.log(raw),
+    methodMap: {
+        hello() {
+            return 'hello, world!';
+        },
+        add(numberA, numberB) {
+            return numberA + numberB;
+        }
+    }
+});
+```
+A server and a client comunication. `example/client-server-comunication.js`,
+```js
+const JsonRpc = require('@produck/jsonrpc');
+
+const client = JsonRpc.Client({
+	sendRequest: raw => server.handleRequest(raw)
+});
+
+const server = JsonRpc.Server({
+	sendResponse: raw => client.handleResponse(raw),
+	methodMap: {
+		add: (numA, numB) => numA + numB
+	}
+});
+
+(async function Example() {
+	const result = await client.request('add', [4, 5]);
+
+	console.log(result); // 9
+
+	// To destroy the client to avoid memory leaking.
+	// UNECESSARY to destroy after each `client.request()`;
+	client.destroy();
+}());
+```
+A jsonrpc server in http, `example/jsonrpc-http-server.js`
+```js
+const JsonRpc = require('@produck/jsonrpc');
+const http = require('http');
+
+const server = JsonRpc.Server({
+	methodMap: {
+		add: (a, b) => a + b
+	}
+});
+
+function getPayloadData(stream) {
+	return new Promise((resolve, reject) => {
+		let data = Buffer.from([]);
+
+		stream.on('data', chunk => {
+			data = Buffer.concat([
+				data, chunk
+			], data.length + chunk.length);
+		}).on('end', () => resolve(data));
+	});
+}
+
+http.createServer(async function JsonRpcRequestListener(req, res) {
+	const requestBody = await getPayloadData(req);
+	const responseRaw = await server.handleRequest(requestBody.toString());
+
+	res.setHeader('Content-Type', 'application/json');
+	res.end(responseRaw);
+}).listen(8080);
+
+// Use a http client tool like "Postman" to send POST request.
+//
+// >>>>
+// POST http://127.0.0.1:8080
+// {"jsonrpc":"2.0","id":2,"method":"add","params":[3,4]}
+//
+// <<<<
+// {"jsonrpc":"2.0","id":2,"result":7}
+
+```
 ## Client API
-### Client(options?: Client.Options): Client
-All items of `Client.Options` are options. 
+A jsonrpc client instance is used to help developer implement `request`, `notification`
+and `batch` feature in the specification ["Request Object"](https://www.jsonrpc.org/specification#request_object) in JSONRPC 2.0.
+### Constructor
+Creating a jsonrpc client instance. The `new` is not necessary.
+#### Client(options?: ClientOptions): Client
+All items of `Client.Options` are optional. 
 ```ts
-interface Options {
+interface ClientOptions {
     /**
      * Client peer name.
      */
@@ -96,6 +184,8 @@ interface Options {
      *
      * The best way to timeout is using `client.handleResponse` to trigger a
      * timeout error.
+     * 
+     * It MUST be greater than `10`.
      *
      * @default 120000
      */
@@ -108,13 +198,91 @@ interface Options {
     warn?(message: any): void;
 }
 ```
-### Client.request(method: string, params?: object | any[]): Promise<any>
-### Client.notification(method: string, params?: object | any[]): void
+### Instance
 
-### Client.batch(): Client.Batch
+#### client.name
+To access the name of a client. Default: '\<client-anonymous>'
+```js
+const client = Client({ name: 'foo' });
 
+console.log(client.name); // >> foo
+```
+#### client.request(method: string, params?: object | any[]): Promise<any>
+A rpc call is represented by sending a Request object to a Server. It will create
+a invoking waiting response from server by [client.handleResponse](#client.handleResponse(raw):-void)
+to resolve.
+```js
+const JsonRpc = require('@produck/jsonrpc');
+const client = Client();
+
+(async function ClentRequestExample() {
+    try {
+        const result = await clent.request('add', [1, 2]);
+    } catch (error) {
+        console.log(error);
+    }
+}());
+```
+#### client.notification(method: string, params?: object | any[]): void
+A Notification is a Request object without an "id" member. A Request object that
+is a Notification signifies the Client's lack of interest in the corresponding
+Response object.
+```js
+const JsonRpc = require('@produck/jsonrpc');
+const client = Client();
+
+client.notificate('any'); // Just request without any response.
+```
+#### client.batch(): Client.Batch
+To send several Request objects at the same time, the Client MAY send an Array
+filled with Request objects. See also ["Batch"](https://www.jsonrpc.org/specification#batch)
+
+Creating a batch,
+```js
+const JsonRpc = require('@produck/jsonrpc');
+const client = JsonRpc.Client();
+
+client.batch()
+    .request('any', (err, result) => {})
+    .request('any', [1, 2], (err, result) => {})
+    .notification('any', { foo: 'bar' })
+    .send(); // return a Promise<void> after response incoming.
+
+```
+[How to use batch](#batch-instance)
+#### client.handleResponse(raw): void
+A raw data of request payload will be generated when calling `client.request()`
+or `batch.send()`. It may get a response raw contained the result(s) or error(s)
+from jsonrpc server.
+```js
+```
+
+#### client.destroy(): void
+
+### Batch Instance
+Creating from a specifical client instance by `client.batch()` to help sending a serial of
+request or notification - [client.batch()`](#clientbatch-clientbatch).
+#### batch.request(method: string, callback: (err, result) => {})
+#### batch.request(method: string, params: object | any[], callback: (err, result) => {})
+#### batch.notificate(mthod: string, params?: object | any[]): void
+#### batch.send(): Promise<void>
 ## Server API
+### Contructor
+#### Server(options: Server.Options): Server
 
+### Instance
+
+#### server.name
+To access the name of a server. Default: '\<server-anonymous>'
+```js
+const server = Server({ name: 'foo' });
+
+console.log(server.name); // >> foo
+```
+
+#### server.handleRequest(raw: any): any
+
+## Client request timeout
 ## JSON-RPC specification
 
 * https://www.jsonrpc.org/

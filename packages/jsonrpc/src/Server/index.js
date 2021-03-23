@@ -63,7 +63,11 @@ module.exports = function Server(options) {
 				: await RequestHandler.One(request);
 
 		if (response !== null) {
-			sendResponse(serialize(response));
+			const responseRaw = serialize(response);
+
+			sendResponse(responseRaw);
+
+			return responseRaw;
 		}
 	}
 

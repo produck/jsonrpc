@@ -1,13 +1,16 @@
 'use strict';
 
+
 module.exports = function normalize(_options = {}) {
+	function noop() {}
+
 	const options = {
 		name: '<server-anonymous>',
 		methodMap: {},
 		serialize: JSON.stringify,
 		deserialize: JSON.parse,
-		sendResponse: raw => raw,
-		warn: () => {}
+		sendResponse: noop,
+		warn: noop
 	};
 
 	const {

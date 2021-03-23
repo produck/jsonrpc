@@ -38,13 +38,13 @@ module.exports = function Client(options) {
 
 			context.send(payload);
 
-			return callback && callback(payload);
+			return callback(payload);
 		};
 	}
 
 	return {
 		request: Caller(invoking => context.register(invoking)),
-		notificate: Caller(),
+		notificate: Caller(() => {}),
 		handleResponse(raw) {
 			const response = deserialize(raw);
 
