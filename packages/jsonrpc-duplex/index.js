@@ -54,7 +54,7 @@ function ProduckJsonRpcDuplexPeer(options) {
 			context.client.handleResponse(raw);
 		}),
 		handleRequest: WrapAssertDestroy((raw) => {
-			context.server.handleRequest(raw);
+			return context.server.handleRequest(raw);
 		}),
 		destroy: WrapAssertDestroy(() => {
 			context.client.destroy();
@@ -64,7 +64,7 @@ function ProduckJsonRpcDuplexPeer(options) {
 }
 
 module.exports = {
-	DuplexPeer: ProduckJsonRpcDuplexPeer,
+	Peer: ProduckJsonRpcDuplexPeer,
 	Client: JsonRpc.Client,
 	Server: JsonRpc.Server
 };

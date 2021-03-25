@@ -47,7 +47,7 @@ declare namespace Server {
 		 * @param raw raw data of request payload
 		 * @returns raw data of response payload
 		 */
-		handleRequest(raw: any): any;
+		handleRequest(raw: any): Promise<any>;
 
 		/**
 		 * Access the name of a server peer.

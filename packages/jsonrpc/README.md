@@ -60,7 +60,6 @@ const JsonRpc = require('@produck/jsonrpc');
 
 const server = JsonRpc.Server({
     // Providing a function to handle a response payload raw defining how to send.
-    // Such as http response...
     sendRequest: raw => console.log(raw),
     methodMap: {
         hello() {
@@ -88,13 +87,13 @@ const server = JsonRpc.Server({
 });
 
 (async function Example() {
-	const result = await client.request('add', [4, 5]);
+    const result = await client.request('add', [4, 5]);
 
-	console.log(result); // 9
+    console.log(result); // 9
 
-	// To destroy the client to avoid memory leaking.
-	// UNECESSARY to destroy after each `client.request()`;
-	client.destroy();
+    // To destroy the client to avoid memory leaking.
+    // UNECESSARY to destroy after each `client.request()`;
+    client.destroy();
 }());
 ```
 A jsonrpc server in http, `example/jsonrpc-http-server.js`
@@ -103,29 +102,29 @@ const JsonRpc = require('@produck/jsonrpc');
 const http = require('http');
 
 const server = JsonRpc.Server({
-	methodMap: {
-		add: (a, b) => a + b
-	}
+    methodMap: {
+        add: (a, b) => a + b
+    }
 });
 
 function getPayloadData(stream) {
-	return new Promise((resolve, reject) => {
-		let data = Buffer.from([]);
+    return new Promise((resolve, reject) => {
+        let data = Buffer.from([]);
 
-		stream.on('data', chunk => {
-			data = Buffer.concat([
-				data, chunk
-			], data.length + chunk.length);
-		}).on('end', () => resolve(data));
-	});
+        stream.on('data', chunk => {
+            data = Buffer.concat([
+                data, chunk
+            ], data.length + chunk.length);
+        }).on('end', () => resolve(data));
+    });
 }
 
 http.createServer(async function JsonRpcRequestListener(req, res) {
-	const requestBody = await getPayloadData(req);
-	const responseRaw = await server.handleRequest(requestBody.toString());
+    const requestBody = await getPayloadData(req);
+    const responseRaw = await server.handleRequest(requestBody.toString());
 
-	res.setHeader('Content-Type', 'application/json');
-	res.end(responseRaw);
+    res.setHeader('Content-Type', 'application/json');
+    res.end(responseRaw);
 }).listen(8080);
 
 // Use a http client tool like "Postman" to send POST request.
@@ -198,16 +197,42 @@ interface ClientOptions {
     warn?(message: any): void;
 }
 ```
-### Instance
+Creating a client,
+```js
+const JsonRpc = require('@produck/jsonrpc');
+
+// No options
+const client = JsonRpc.Client();
+
+// Options with all items
+const client2 = JsonRpc.Client({
+    name: 'foo',
+    serialize: JSON.stringify,
+    deserialize: JSON.parse,
+    sendRequest: raw => console.log(raw),
+    timeout: 120000,
+    Id: IdGenerator()
+});
+
+function IdGenerator() {
+    let counter = 0;
+
+    return function Id() {
+        return counter++;
+    };
+}
+```
+### Client Instance
 
 #### client.name
 To access the name of a client. Default: '\<client-anonymous>'
 ```js
+const JsonRpc = require('@produck/jsonrpc');
 const client = Client({ name: 'foo' });
 
 console.log(client.name); // >> foo
 ```
-#### client.request(method: string, params?: object | any[]): Promise<any>
+#### client.request(method: string, params?: object | any[]): Promise\<any>
 A rpc call is represented by sending a Request object to a Server. It will create
 a invoking waiting response from server by [client.handleResponse](#client.handleResponse(raw):-void)
 to resolve.
@@ -237,7 +262,7 @@ client.notificate('any'); // Just request without any response.
 To send several Request objects at the same time, the Client MAY send an Array
 filled with Request objects. See also ["Batch"](https://www.jsonrpc.org/specification#batch)
 
-Creating a batch,
+Creating a batch and [how to use batch](#batch-instance) below,
 ```js
 const JsonRpc = require('@produck/jsonrpc');
 const client = JsonRpc.Client();
@@ -249,40 +274,140 @@ client.batch()
     .send(); // return a Promise<void> after response incoming.
 
 ```
-[How to use batch](#batch-instance)
 #### client.handleResponse(raw): void
 A raw data of request payload will be generated when calling `client.request()`
-or `batch.send()`. It may get a response raw contained the result(s) or error(s)
-from jsonrpc server.
+or `batch.send()`. It may get a response raw data contained the result(s) or
+error(s) from jsonrpc server.
 ```js
-```
+const JsonRpc = require('@produck/jsonrpc');
 
+const client = JsonRpc.Client({
+    Id: () => 123,
+	sendRequest: raw => console.log(raw)
+});
+
+(async function Example() {
+    const result = await client.request('add', [4, 5]);
+
+    console.log(result); // 9
+
+    // To destroy the client to avoid memory leaking.
+    // UNECESSARY to destroy after each `client.request()`;
+    client.destroy();
+}());
+
+client.handleResponse('{"jsonrpc":"2.0","id":123,"result":9}');
+```
 #### client.destroy(): void
+There is a observer implemented by setInterval() in each "Invoking Registries"
+of all clients. It is used to find out all timeout invoking to cause "Internal
+Timeout Error" as soon as possible. So that each client MUST be destroyed if
+they are not be used any more to avoid memory leaking.
+```js
+const JsonRpc = require('@produck/jsonrpc');
+
+const client = JsonRpc.Client();
+
+// Do something ...
+
+client.destroy();
+```
+And more about "Internal Timeout Error" see also [Client Request Timeout](#client-request-timeout).
 
 ### Batch Instance
-Creating from a specifical client instance by `client.batch()` to help sending a serial of
-request or notification - [client.batch()`](#clientbatch-clientbatch).
+Creating from a specifical client instance by `client.batch()` to help sending
+a serial of request or notification - [client.batch()`](#clientbatch-clientbatch).
 #### batch.request(method: string, callback: (err, result) => {})
 #### batch.request(method: string, params: object | any[], callback: (err, result) => {})
 #### batch.notificate(mthod: string, params?: object | any[]): void
-#### batch.send(): Promise<void>
+#### batch.send(): Promise\<void>
 ## Server API
+When a rpc call is made, the Server MUST reply with a Response, except for in
+the case of Notifications. 
 ### Contructor
-#### Server(options: Server.Options): Server
+Creating a jsonrpc server instance. The `new` is not necessary.
+#### Server(options: ServerOptions): Server
+```ts
+interface ServerOptions {
+    /**
+     * Server peer name.
+     */
+    name?: string;
 
-### Instance
+    /**
+     * Coverting a payload to transport format.
+     * @param payload a valid jsonrpc 2.0 payload objecct
+     */
+    serialize?(payload: Payload): any;
+
+    /**
+     * Coverting a raw data from transport format to jsonrpc payload object.
+     * @param raw A transport data.
+     */
+    deserialize?(raw: any): Payload;
+
+    /**
+     * How to transport the serialized data.
+     * @param raw A transport data.
+     */
+    sendResponse?(raw: any): void;
+
+    /**
+     * Handling message from caught error. Default: () => {}
+     * @param message
+     */
+    warn?(message: any): void;
+
+    /**
+     * A map of registered methods.
+     */
+    methodMap?: MethodMap;
+}
+```
+### Server Instance
 
 #### server.name
 To access the name of a server. Default: '\<server-anonymous>'
 ```js
+const JsonRpc = require('@produck/jsonrpc');
 const server = Server({ name: 'foo' });
 
 console.log(server.name); // >> foo
 ```
 
-#### server.handleRequest(raw: any): any
+#### server.handleRequest(raw: any): Promise\<any>
+A raw data of request payload will be incoming as `raw` then SHOULD execute
+`server.handleRequest(raw)` to handle it. Finally, a response raw was generated
+to be used by `options.sendResponse(raw)` witch has been defined.
+```js
+const JsonRpc = require('@produck/jsonrpc');
 
+let responseRawFromSendResponse;
+const server = JsonRpc.Server({
+    // for CASE 1
+    sendResponse: raw => responseRawFromSendResponse = raw,
+    methodMap: {
+        add: (numA, numB) => numA + numB
+    }
+});
+
+(async function Example() {
+    // for CASE 2
+    const responseRaw = await server
+        .handleRequst('{"jsonrpc":"2.0","id":1,"method":"add","params":[2,3]}');
+    
+    console.log(responseRaw === responseRawFromSendResponse);
+    // >> true
+    // They are SAME!
+}());
+```
+There are 2 cases:
+1. Something must be done in a pair of request-response. (binding a socket)
+2. All of response can be sent by a same way. (in a http server)
 ## Client request timeout
+//todo
+## Extension - customers payload raw
+//todo
 ## JSON-RPC specification
 
 * https://www.jsonrpc.org/

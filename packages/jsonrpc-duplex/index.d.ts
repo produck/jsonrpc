@@ -98,9 +98,10 @@ declare namespace JsonRpcDuplex {
 		
 		/**
 		 * Proxy of server.handleRequest()
-		 * @param raw A transport data;
+		 * @param raw A transport data
+		 * @returns serialized response raw data
 		 */
-		handleRequest(raw: any): void;
+		handleRequest(raw: any): any;
 
 		/**
 		 * Proxy of client.destroy()
@@ -112,7 +113,7 @@ declare namespace JsonRpcDuplex {
 declare function JsonRpcDuplexPeer(options: JsonRpcDuplex.Options): JsonRpcDuplex.Peer;
 
 export = {
-	DuplexPeer: JsonRpcDuplexPeer,
+	Peer: JsonRpcDuplexPeer,
 	Client: JsonRpcClient,
 	Server: JsonRpcServer
 };

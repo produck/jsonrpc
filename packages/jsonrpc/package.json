@@ -4,7 +4,6 @@
   "description": "Communication independent jsonrpc 2.0",
   "main": "index.js",
   "scripts": {
-    "debug": "node ./script/debug.js",
     "test": "mocha -t 5000"
   },
   "types": "index.d.ts",
@@ -23,7 +22,7 @@
   "bugs": {
     "url": "https://github.com/produck/jsonrpc/issues"
   },
-  "homepage": "https://github.com/produck/jsonrpc#readme",
+  "homepage": "https://github.com/produck/jsonrpc/tree/master/packages/jsonrpc",
   "devDependencies": {
     "mocha": "^8.3.2"
   },

@@ -23,7 +23,7 @@ module.exports = function Client(options) {
 
 	const Batch = BatchProvider(context);
 
-	function Caller(callback) {
+	function Caller(hasId, callback = () => {}) {
 		return function call(method, params) {
 			if (typeof method !== 'string') {
 				throw new TypeError('The `method` MUST be a string');
@@ -33,18 +33,20 @@ module.exports = function Client(options) {
 				throw new TypeError('The `params` MUST be an array or a plain object.');
 			}
 
-			const id = callback ? context.Id() : undefined;
+			const id = hasId ? context.Id() : undefined;
 			const payload = Payload.Request(method, params, id);
 
 			context.send(payload);
 
-			return callback(payload);
+			if (hasId) {
+				return callback(payload);
+			}
 		};
 	}
 
 	return {
-		request: Caller(invoking => context.register(invoking)),
-		notificate: Caller(() => {}),
+		request: Caller(true, invoking => context.register(invoking)),
+		notificate: Caller(false),
 		handleResponse(raw) {
 			const response = deserialize(raw);
 
