@@ -4,12 +4,13 @@
   "description": "",
   "main": "index.js",
   "devDependencies": {
+    "eslint": "^7.22.0",
     "lerna": "^4.0.0"
   },
   "scripts": {
     "test": "lerna run test",
     "lint": "eslint --fix packages/**/*.js",
-    "prepublish": "npm run lint && npm run test",
+    "prepublish": "npm run dev:install && npm run lint && npm run test",
     "dev:install": "lerna bootstrap"
   },
   "repository": {

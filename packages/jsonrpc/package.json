@@ -4,7 +4,8 @@
   "description": "Communication independent jsonrpc 2.0",
   "main": "index.js",
   "scripts": {
-    "test": "mocha -t 5000"
+    "test": "mocha -t 5000",
+		"coverage": "nyc --reporter=lcov npm run test"
   },
   "types": "index.d.ts",
   "publishConfig": {
@@ -15,16 +16,20 @@
     "url": "git+https://github.com/produck/jsonrpc.git"
   },
   "keywords": [
-    "jsonrpc"
+    "jsonrpc",
+    "jsonrpc-2.0",
+    "json",
+    "rpc"
   ],
   "author": "ChaosLee",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/produck/jsonrpc/issues"
   },
-  "homepage": "https://github.com/produck/jsonrpc/tree/master/packages/jsonrpc",
+  "homepage": "https://github.com/produck/jsonrpc/tree/master/packages/jsonrpc#readme",
   "devDependencies": {
-    "mocha": "^8.3.2"
-  },
-  "gitHead": "ecea6d2b7f83897a8206e77e80e4f4e28db821af"
+    "istanbul": "^0.4.5",
+    "mocha": "^8.3.2",
+    "nyc": "^15.1.0"
+  }
 }

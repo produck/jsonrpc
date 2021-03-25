@@ -1,6 +1,10 @@
 @produck/jsonrpc
 =======================
 
+[![npm (scoped)](https://img.shields.io/npm/v/@produck/jsonrpc?style=flat-square)](https://www.npmjs.org/package/@produck/jsonrpc)
+[![NPM](https://img.shields.io/npm/l/@produck/jsonrpc?style=flat-square)](https://opensource.org/licenses/MIT)
+[![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg?style=flat-square)](https://lerna.js.org/)
+
 This module is used to help developing rpc application in [JSONRPC 2.0](https://www.jsonrpc.org/) protocol.
 
 ## Feature
@@ -39,7 +43,7 @@ client.request('anyMethod')
     .catch(error => console.error(error));
 
 // Just calling and ignore response
-client.notification('anyMethod', { foo: 'bar' });
+client.notificate('anyMethod', { foo: 'bar' });
 
 // In async function
 (async function request() {
@@ -138,7 +142,7 @@ http.createServer(async function JsonRpcRequestListener(req, res) {
 
 ```
 ## Client API
-A jsonrpc client instance is used to help developer implement `request`, `notification`
+A jsonrpc client instance is used to help developer implement `request`, `notificate`
 and `batch` feature in the specification ["Request Object"](https://www.jsonrpc.org/specification#request_object) in JSONRPC 2.0.
 ### Constructor
 Creating a jsonrpc client instance. The `new` is not necessary.
@@ -248,7 +252,7 @@ const client = Client();
     }
 }());
 ```
-#### client.notification(method: string, params?: object | any[]): void
+#### client.notificate(method: string, params?: object | any[]): void
 A Notification is a Request object without an "id" member. A Request object that
 is a Notification signifies the Client's lack of interest in the corresponding
 Response object.
@@ -270,7 +274,7 @@ const client = JsonRpc.Client();
 client.batch()
     .request('any', (err, result) => {})
     .request('any', [1, 2], (err, result) => {})
-    .notification('any', { foo: 'bar' })
+    .notificate('any', { foo: 'bar' })
     .send(); // return a Promise<void> after response incoming.
 
 ```
