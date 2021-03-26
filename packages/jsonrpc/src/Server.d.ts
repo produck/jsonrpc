@@ -2,7 +2,7 @@ import { Payload } from './Payload';
 
 export namespace Server {
 	export interface MethodMap {
-		[key: string]: () => {}
+		[key: string]: (...arg: any) => any
 	}
 
 	export interface Options {
