@@ -1,6 +1,6 @@
 'use strict';
 
-const Server = require('../src/Server');
+const Server = require('../packages/jsonrpc/src/Server');
 const assert = require('assert');
 
 describe('Server::', function () {

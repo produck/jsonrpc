@@ -3,10 +3,6 @@
   "version": "0.3.0",
   "description": "Communication independent jsonrpc 2.0",
   "main": "index.js",
-  "scripts": {
-    "test": "mocha -t 5000",
-		"coverage": "nyc --reporter=lcov npm run test"
-  },
   "types": "index.d.ts",
   "publishConfig": {
     "access": "public"
@@ -26,10 +22,5 @@
   "bugs": {
     "url": "https://github.com/produck/jsonrpc/issues"
   },
-  "homepage": "https://github.com/produck/jsonrpc/tree/master/packages/jsonrpc#readme",
-  "devDependencies": {
-    "istanbul": "^0.4.5",
-    "mocha": "^8.3.2",
-    "nyc": "^15.1.0"
-  }
+  "homepage": "https://github.com/produck/jsonrpc/tree/master/packages/jsonrpc#readme"
 }

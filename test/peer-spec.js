@@ -1,6 +1,6 @@
 'use strict';
 
-const { Peer } = require('../');
+const { Peer } = require('../packages/jsonrpc-duplex');
 const assert = require('assert');
 
 describe('DuplexPeer::', function () {

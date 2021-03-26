@@ -3,10 +3,6 @@
   "version": "0.1.2",
   "description": "Using jsonrpc client & server to implement duplex-jsonrpc peer.",
   "main": "index.js",
-  "scripts": {
-    "test": "mocha -t 5000",
-		"coverage": "nyc --reporter=lcov npm run test"
-  },
   "keywords": [
     "jsonrpc",
     "jsonrpc-2.0",
@@ -26,11 +22,6 @@
   },
   "homepage": "https://github.com/produck/jsonrpc/tree/master/packages/jsonrpc-duplex#readme",
   "license": "MIT",
-  "devDependencies": {
-    "istanbul": "^0.4.5",
-    "mocha": "^8.3.2",
-    "nyc": "^15.1.0"
-  },
   "dependencies": {
     "@produck/jsonrpc": "^0.3.0"
   }
