@@ -1,6 +1,6 @@
 {
   "name": "@produck/jsonrpc",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Communication independent jsonrpc 2.0",
   "main": "index.js",
   "types": "index.d.ts",

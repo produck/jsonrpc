@@ -1,6 +1,6 @@
 {
   "name": "@produck/jsonrpc-duplex",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Using jsonrpc client & server to implement duplex-jsonrpc peer.",
   "main": "index.js",
   "keywords": [
@@ -23,6 +23,6 @@
   "homepage": "https://github.com/produck/jsonrpc/tree/master/packages/jsonrpc-duplex#readme",
   "license": "MIT",
   "dependencies": {
-    "@produck/jsonrpc": "^0.3.0"
+    "@produck/jsonrpc": "^0.3.1"
   }
 }
