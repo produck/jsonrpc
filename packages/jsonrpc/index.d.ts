@@ -1,5 +1,2 @@
-import ClientFactory from './src/Client';
-import ServerFactory from './src/Server';
-
-export const Client: typeof ClientFactory;
-export const Server: typeof ServerFactory;
+export { Client } from './src/Client';
+export { Server } from './src/Server';

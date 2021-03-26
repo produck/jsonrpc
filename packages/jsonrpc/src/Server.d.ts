@@ -1,6 +1,6 @@
 import { Payload } from './Payload';
 
-declare namespace Server {
+export namespace Server {
 	export interface MethodMap {
 		[key: string]: () => {}
 	}
@@ -56,6 +56,4 @@ declare namespace Server {
 	}
 }
 
-declare function Server(options: Server.Options): Server.Peer;
-
-export = Server;
+export function Server(options: Server.Options): Server.Peer;

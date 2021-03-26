@@ -1,6 +1,6 @@
 import { Payload } from './Payload';
 
-declare namespace Client {
+export namespace Client {
 	type Params = any[] | object;
 	type BatchRequestListener = (err, result: any) => void;
 
@@ -122,6 +122,4 @@ declare namespace Client {
 	}
 }
 
-declare function Client(options: Client.Options): Client.Peer;
-
-export = Client;
+export function Client(options: Client.Options): Client.Peer;
