@@ -323,10 +323,53 @@ And more about "Internal Timeout Error" see also [Client Request Timeout](#clien
 ### Batch Instance
 Creating from a specifical client instance by `client.batch()` to help sending
 a serial of request or notification - [client.batch()`](#clientbatch-clientbatch).
-#### batch.request(method: string, callback: (err, result) => {})
-#### batch.request(method: string, params: object | any[], callback: (err, result) => {})
-#### batch.notificate(mthod: string, params?: object | any[]): void
+
+A `callback` MUST be provided on using `request()`, or using `notificate()` explicitly.
+#### batch.request(method: string, callback: (err, result) => {}): Client.Batch
+```js
+const JsonRpc = require('@produck/jsonrpc');
+const client = JsonRpc.Client();
+
+client.batch().request('any', (err, result) => {});
+```
+#### batch.request(method: string, params: object | any[], callback: (err, result) => {}): Client.Batch
+```js
+const JsonRpc = require('@produck/jsonrpc');
+const client = JsonRpc.Client();
+
+client.batch().request('any', [1, 2], (err, result) => {});
+```
+#### batch.notificate(mthod: string, params?: object | any[]): Client.Batch
+Just using `notificate()` explictily if you are sure that response is unecessary.
+```js
+const JsonRpc = require('@produck/jsonrpc');
+const client = JsonRpc.Client();
+
+client.batch().notificate('any', { foo: 'bar' });
+```
 #### batch.send(): Promise\<void>
+To send all requests & notifications.
+A batch has been sent MUST not be used any more.
+It will throw an error after an empty batch sending.
+```js
+const JsonRpc = require('@produck/jsonrpc');
+const client = JsonRpc.Client();
+
+// It could not send a empty batch to jsonrpc server
+// It will throw an error.
+client.batch().send();
+
+const correctBatch = client.batch()
+    .request('any', (err, result) => {})
+    .request('any', [1, 2], (err, result) => {})
+    .notificate('any', { foo: 'bar' });
+
+// return a Promise<void> after response incoming.
+correctBatch.send();
+
+// It could not be sent again.
+correctBatch.send();
+```
 ## Server API
 When a rpc call is made, the Server MUST reply with a Response, except for in
 the case of Notifications. 
@@ -408,8 +451,8 @@ const server = JsonRpc.Server({
 }());
 ```
 There are 2 cases:
-1. Something must be done in a pair of request-response. (binding a socket)
-2. All of response can be sent by a same way. (in a http server)
+1. Something must be done in a pair of request-response. (in a http server)
+2. All of response can be sent by a same way. (binding a socket)
 ## Client request timeout
 //todo
 ## Extension - customers payload raw
