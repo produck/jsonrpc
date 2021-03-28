@@ -318,7 +318,7 @@ const client = JsonRpc.Client();
 
 client.destroy();
 ```
-And more about "Internal Timeout Error" see also [Client Request Timeout](#client-request-timeout).
+And more about "Internal Timeout Error" see also [Client Timeout](#Client-side-request-timeout).
 
 ### Batch Instance
 Creating from a specifical client instance by `client.batch()` to help sending
@@ -451,10 +451,33 @@ const server = JsonRpc.Server({
 }());
 ```
 There are 2 cases:
-1. Something must be done in a pair of request-response. (in a http server)
-2. All of response can be sent by a same way. (binding a socket)
-## Client request timeout
-//todo
+1. All of response can be sent by a same way. (binding a socket)
+2. Something must be done in a pair of request-response. (in a http server)
+## Client-side request timeout
+Actually, there exist so many cases that lead to timeout especially in the
+scenario with network. Because of invoking registry is implemented in clients that
+`promise` of invoking is managed. It might lead to memory leak if a promise is
+keeping in pending. So an observer made by `setInterval()` is existed in each
+registry to ensure `reject` a expired invoking finally. Each client is also need
+to be [destroyed](#clientdestroy-void) if no use any more.
+
+As a suggestion, a timeout error should be throws by `client.handleResponse()`
+explicitly. The internal timeout mechanism is just a guarantee.
+
+```js
+const JsonRpc = require('@produck/jsonrpc');
+const client = JsonRpc.Client();
+
+client.request('any')
+    .then(result => console.log(result))
+    .catch(error => console.error(error));
+
+setTimeout(() => {
+    client.handleResponse(
+        '{"jsonrpc":"2.0","id":1,"error":{"code":-32000,"message":"Customer timeout error"}}'
+    );
+}, 5000);
+```
 ## Extension - customers payload raw
 //todo
 ## JSON-RPC specification
