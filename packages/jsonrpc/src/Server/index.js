@@ -1,7 +1,7 @@
 'use strict';
 
 const normalize = require('./normalize');
-const Error = require('./RpcError');
+const RpcError = require('./RpcError');
 const utils = require('../utils');
 const Caller = require('./Caller');
 const Payload = require('../Payload');
@@ -24,7 +24,7 @@ module.exports = function Server(options) {
 	const RequestHandler = {
 		async Batch(requestList) {
 			if (!utils.isValidBatchRequest(requestList)) {
-				return Payload.Response(null, Error.INVALID_REQUEST);
+				return Payload.Response(null, RpcError.INVALID_REQUEST);
 			}
 
 			const responseList = [];
@@ -42,7 +42,7 @@ module.exports = function Server(options) {
 		},
 		async One(request) {
 			if (!utils.isValidRequest(request)) {
-				return Payload.Response(null, Error.INVALID_REQUEST);
+				return Payload.Response(null, RpcError.INVALID_REQUEST);
 			}
 
 			return await call(request);
@@ -57,7 +57,7 @@ module.exports = function Server(options) {
 		const request = parse(raw);
 
 		const response = request === null
-			? Payload.Response(null, Error.PARSE_ERROR)
+			? Payload.Response(null, RpcError.PARSE_ERROR)
 			: Array.isArray(request)
 				? await RequestHandler.Batch(request)
 				: await RequestHandler.One(request);

@@ -33,8 +33,7 @@ module.exports = function Client(options) {
 				throw new TypeError('The `params` MUST be an array or a plain object.');
 			}
 
-			const id = hasId ? context.Id() : undefined;
-			const payload = Payload.Request(method, params, id);
+			const payload = Payload.Request(method, params, hasId ? context.Id() : undefined);
 
 			context.send(payload);
 

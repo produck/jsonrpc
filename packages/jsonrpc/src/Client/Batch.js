@@ -7,14 +7,10 @@ module.exports = function BatchProvider(clientContext) {
 	return function Batch() {
 		const taskList = [];
 
-		function ReadyWrap(callback) {
-			return function batchMethod(...args) {
-				if (batch.status !== STATUS.READY) {
-					throw new Error('Batch sent. It SHOULD NOT be used any more.');
-				}
-
-				return callback(...args);
-			};
+		function ensureReady() {
+			if (batch.status !== STATUS.READY) {
+				throw new Error('Batch sent. It SHOULD NOT be used any more.');
+			}
 		}
 
 		function registerTask(method, params, callback) {
@@ -27,7 +23,9 @@ module.exports = function BatchProvider(clientContext) {
 
 		const batch = {
 			status: STATUS.READY,
-			request: ReadyWrap(function request() {
+			request() {
+				ensureReady();
+
 				const resolved = {};
 
 				if (arguments.length === 2) {
@@ -50,15 +48,18 @@ module.exports = function BatchProvider(clientContext) {
 				const { method, params, callback } = resolved;
 
 				return registerTask(method, params, callback);
-			}),
-			notificate: ReadyWrap(function notificate(method, params) {
+			},
+			notificate(method, params) {
+				ensureReady();
+
 				return registerTask(method, params);
-			}),
-			send: ReadyWrap(async function send() {
+			},
+			send() {
 				if (taskList.length === 0) {
 					throw new Error('Can not send a empty batch.');
 				}
 
+				ensureReady();
 				batch.status = STATUS.PENDING;
 
 				const callingList = [];
@@ -75,9 +76,10 @@ module.exports = function BatchProvider(clientContext) {
 					return task.invoking;
 				});
 
+				// Any of calling finished means all responses will have been incoming.
 				Promise.race(callingList).then(() => batch.status = STATUS.END);
 				clientContext.send(invokingList);
-			})
+			}
 		};
 
 		return batch;
